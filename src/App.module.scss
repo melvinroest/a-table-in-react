@@ -1,0 +1,73 @@
+.appWrapper {
+  align-items: stretch;
+  display: flex;
+  width: 100%;
+}
+
+.sidebarWrapper {
+  min-width: 260px;
+  max-width: 260px;
+  direction: ltr;
+  height: 100vh;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  left: 0;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-content: flex-start;
+  align-items: flex-start;
+  transition: margin-left 0.35s ease-in-out, left 0.35s ease-in-out,
+    margin-right 0.35s ease-in-out, right 0.35s ease-in-out;
+  background: #293042;
+}
+
+.sidebarContent {
+  direction: inherit;
+  box-sizing: border-box !important;
+  position: relative;
+  display: block;
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  max-height: 100%;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overflow: hidden scroll;
+  padding: 0px;
+}
+
+.sidebarLink {
+  padding: 0.55rem 1.5rem 0.55rem 3.7rem;
+  // padding: 0.625rem 1.625rem;
+  font-weight: 400;
+  display: block;
+  transition: color 75ms ease-in-out;
+  position: relative;
+  text-decoration: none;
+  cursor: pointer;
+  color: #adb5bd;
+  // color: rgba(233,236,239,.5);
+}
+
+.sidebarLink:hover {
+  color: #e9ecef;
+}
+
+.main {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  min-width: 0;
+  transition: margin-left 0.35s ease-in-out, left 0.35s ease-in-out,
+    margin-right 0.35s ease-in-out, right 0.35s ease-in-out;
+  flex-direction: column;
+}
+
+.content {
+  padding: 2.5rem 2.5rem 1.5rem;
+  flex: 1;
+  direction: ltr;
+  display: block;
+}
