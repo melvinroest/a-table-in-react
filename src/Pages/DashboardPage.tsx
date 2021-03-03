@@ -1,5 +1,5 @@
 
-function Dashboard() {
+function DashboardPage() {
   return (
     <div id="DashboardComponent">
       DashboardComponent
@@ -7,4 +7,4 @@ function Dashboard() {
   );
 } 
 
-export default Dashboard;
+export default DashboardPage;

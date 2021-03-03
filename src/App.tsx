@@ -3,9 +3,9 @@ import { Navbar, Nav } from "react-bootstrap";
 
 import styles from "./App.module.scss";
 
-import Home from "./Pages/Home";
-import Upload from "./Pages/Upload";
-import Dashboard from "./Pages/Dashboard";
+import HomePage from "./Pages/HomePage";
+import UploadPage from "./Pages/UploadPage";
+import DashboardPage from "./Pages/DashboardPage";
 
 function App() {
   return (
@@ -29,9 +29,9 @@ function App() {
         <div className={styles.main}>
           <main className={styles.content}>
             <Switch>
-              <Route exact path="/" component={Home} />
-              <Route exact path="/upload" component={Upload} />
-              <Route exact path="/dashboard" component={Dashboard} />
+              <Route exact path="/" component={HomePage} />
+              <Route exact path="/upload" component={UploadPage} />
+              <Route exact path="/dashboard" component={DashboardPage} />
             </Switch>
           </main>
         </div>
