@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTable, useFilters, useGlobalFilter, useAsyncDebounce } from 'react-table';
+import { useTable, useSortBy, useFilters, useAsyncDebounce } from 'react-table';
 import {matchSorter} from 'match-sorter';
 
 // Define a default UI for filtering
@@ -143,7 +143,7 @@ function Table({ columns, data }: any) {
       filterTypes,
     },
     useFilters, // useFilters!
-    useGlobalFilter // useGlobalFilter!
+    useSortBy
   )
 
   // Render the UI for your table
@@ -153,8 +153,16 @@ function Table({ columns, data }: any) {
           {headerGroups.map(headerGroup => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map(column => (
-                <th {...column.getHeaderProps()}>
+                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
                   {column.render('Header')}
+                  {/* Add a sort direction indicator */}
+                  <span>
+                    {column.isSorted
+                      ? column.isSortedDesc
+                        ? ' 🔽'
+                        : ' 🔼'
+                      : ''}
+                  </span>
                   {/* Render the columns filter UI */}
                   <div>{column.canFilter ? column.render('Filter') : null}</div>
                 </th>
