@@ -5,8 +5,8 @@
 }
 
 .sidebarWrapper {
-  min-width: 260px;
-  max-width: 260px;
+  min-width: 100px;
+  max-width: 100px;
   direction: ltr;
   height: 100vh;
   position: -webkit-sticky;
@@ -39,7 +39,7 @@
 }
 
 .sidebarLink {
-  padding: 0.55rem 1.5rem 0.55rem 3.7rem;
+  padding: 15px;
   // padding: 0.625rem 1.625rem;
   font-weight: 400;
   display: block;

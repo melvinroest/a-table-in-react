@@ -3,9 +3,9 @@ import { Navbar, Nav } from "react-bootstrap";
 
 import styles from "./App.module.scss";
 
-import HomePage from "./Pages/HomePage";
-import UploadPage from "./Pages/UploadPage";
-import DashboardPage from "./Pages/DashboardPage";
+import HomePage from "./pages/HomePage";
+import UploadPage from "./pages/UploadPage";
+import DashboardPage from "./pages/DashboardPage";
 
 function App() {
   return (
