@@ -1,6 +1,45 @@
 import React from 'react';
-import { useTable, useSortBy, useFilters, useAsyncDebounce } from 'react-table';
-import {matchSorter} from 'match-sorter';
+import { useTable, useSortBy, useFilters, useAsyncDebounce, useRowSelect } from 'react-table';
+import { matchSorter } from 'match-sorter';
+import DeleteIcon from '@material-ui/icons/Delete';
+import Checkbox from '@material-ui/core/Checkbox';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import Tooltip from '@material-ui/core/Tooltip';
+import IconButton from '@material-ui/core/IconButton';
+import { lighten, makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx'
+
+const useToolbarStyles = makeStyles((theme: any) => ({
+  root: {
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(1),
+  },
+  highlight: {
+        color: theme.palette.text.primary,
+        backgroundColor: theme.palette.secondary.dark,
+      },
+  title: {
+    flex: '1 1 100%',
+  },
+}));
+
+const IndeterminateCheckbox = React.forwardRef(
+  ({ indeterminate, ...rest }: any, ref: any) => {
+    const defaultRef = React.useRef()
+    const resolvedRef = ref || defaultRef
+
+    React.useEffect(() => {
+      resolvedRef.current.indeterminate = indeterminate
+    }, [resolvedRef, indeterminate])
+
+    return (
+      <>
+        <Checkbox ref={resolvedRef} {...rest} />
+      </>
+    )
+  }
+)
 
 // Define a default UI for filtering
 function DefaultColumnFilter({
@@ -76,7 +115,8 @@ function fuzzyTextFilterFn(rows: any, id: any, filterValue: any) {
   return matchSorter(rows, filterValue, { keys: [ (row: any) => row.values[id]] })
 }
 
-function Table({ columns, data }: any) {
+function Table({ columns, data, setData }: any) {
+  const classes = useToolbarStyles();
   const filterTypes = React.useMemo(
     () => ({
       // Add a new fuzzyTextFilterFn filter type.
@@ -134,7 +174,8 @@ function Table({ columns, data }: any) {
     getTableBodyProps,
     headerGroups,
     rows,
-    prepareRow
+    prepareRow,
+    state: { selectedRowIds },
   } = useTable(
     {
       columns,
@@ -143,12 +184,64 @@ function Table({ columns, data }: any) {
       filterTypes,
     },
     useFilters, // useFilters!
-    useSortBy
-  )
+    useSortBy,
+    useRowSelect,
+    hooks => {
+      hooks.allColumns.push(columns => [
+        // Let's make a column for selection
+        {
+          id: 'selection',
+          Header: ({ getToggleAllRowsSelectedProps }) => (null),
+          // The cell can use the individual row's getToggleRowSelectedProps method
+          // to the render a checkbox
+          Cell: ({ row }: any) => (
+            <div>
+              <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+            </div>
+          ),
+        },
+        ...columns,
+      ])
+    }
+    )
+  
+  const removeByIndexs = (array: any, indexs: any) =>
+    array.filter((_: any, i: number) => !indexs.includes(i));
+
+  const deleteUserHandler = (event: any) => {
+    const newData = removeByIndexs(data, Object.keys(selectedRowIds).map(x => parseInt(x, 10)));
+    console.log(newData);
+    setData(newData);
+  }
+  const numSelected = Object.keys(selectedRowIds).length;
 
   // Render the UI for your table
   return (
-    <table {...getTableProps()}>
+    <>
+    <Toolbar
+      className={clsx(classes.root, {
+        [classes.highlight]: numSelected > 0,
+      })}
+    >
+      {numSelected > 0 ? (
+        <Typography
+          className={classes.title}
+          color="inherit"
+          variant="subtitle1"
+        >
+          {numSelected} selected
+        </Typography>
+      ) : null}
+
+      {numSelected > 0 ? (
+        <Tooltip title="Delete">
+          <IconButton aria-label="delete" onClick={deleteUserHandler}>
+            <DeleteIcon />
+          </IconButton>
+        </Tooltip>
+      ) : null}
+    </Toolbar>
+      <table {...getTableProps()}>
         <thead>
           {headerGroups.map(headerGroup => (
             <tr {...headerGroup.getHeaderGroupProps()}>
@@ -183,6 +276,7 @@ function Table({ columns, data }: any) {
           })}
         </tbody>
       </table>
+    </>
   )
 }
 

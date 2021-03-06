@@ -1,8 +1,9 @@
+import React from 'react';
 import { createData } from "../utils/createData";
 import Table from "../components/Table";
 
-const data = createData();
-const headers = transformHeaders(data.header, data.content[0]);
+const globalData = createData();
+const globalHeaders = transformHeaders(globalData.header, globalData.content[0]);
 
 function transformHeaders(headers: any, content: any) {
   const shapeHeadersFn = (accumulator: any, header: any, index: number) => {
@@ -51,11 +52,12 @@ function convertToNumber(value: any) {
 }
 
 function DashboardPage() {
+  const [data, setData] = React.useState(globalData.content);
   
   return (
     <div id="DashboardComponent">
       DashboardComponent
-      <Table columns={headers} data={data.content} />
+      <Table columns={globalHeaders} data={data} setData={setData} />
     </div>
   );
 } 

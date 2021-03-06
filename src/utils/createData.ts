@@ -11,7 +11,7 @@ export function createData() {
     header: true
   }
   const result = Papa.parse(data, options);
-  return { header: result.meta.fields, content: result.data };
+  return { header: result.meta.fields, content: result.data.slice(0, 20) };
 }
 
 // function parseLine(line: string, valueSeparator: string, quoteChar: string): string[] {
