@@ -2,6 +2,7 @@
 
 # MELVIN
 .DS_Store
+shared/
 
 # dependencies
 /node_modules
