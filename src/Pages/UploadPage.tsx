@@ -3,7 +3,9 @@ import React, { useCallback } from 'react'
 
 import { Upload } from 'react-feather';
 import { FileWithPath, useDropzone } from 'react-dropzone'
-import classnames from 'classnames'; 
+import classnames from 'classnames';
+import axios from "axios";
+import { arrayBufferToBase64 } from "../private/stringTransform";
 
 function UploadPage() {
   const onDrop = useCallback((acceptedFiles) => {
@@ -14,8 +16,18 @@ function UploadPage() {
       reader.onerror = () => console.log('file reading has failed')
       reader.onload = () => {
       // Do whatever you want with the file contents
-        const binaryStr = reader.result
-        console.log(binaryStr)
+        const binaryVal = reader.result as ArrayBuffer;
+        if (binaryVal) {
+          const base64Csv = arrayBufferToBase64(binaryVal);
+          console.log(base64Csv);
+          axios({
+            method: 'POST',
+            url: '/api/useranalytics/upload/',
+            data: {
+              base64Csv: base64Csv
+            }
+          });
+        }
       }
       reader.readAsArrayBuffer(file)
     })
