@@ -1,4 +1,5 @@
 {
+  "proxy": "http://localhost:5001",
   "name": "table",
   "version": "0.1.0",
   "private": true,
@@ -8,6 +9,7 @@
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.2.5",
     "@testing-library/user-event": "^12.8.0",
+    "@types/axios": "^0.14.0",
     "@types/jest": "^26.0.20",
     "@types/match-sorter": "^6.0.0",
     "@types/node": "^12.20.4",
@@ -16,6 +18,7 @@
     "@types/react-dom": "^17.0.1",
     "@types/react-router-dom": "^5.1.7",
     "@types/react-table": "^7.0.28",
+    "axios": "^0.21.1",
     "classnames": "^2.2.6",
     "clsx": "^1.1.1",
     "install": "^0.13.0",
@@ -29,6 +32,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "react-table": "^7.6.3",
+    "reflect-metadata": "^0.1.13",
     "typescript": "^4.2.2",
     "web-vitals": "^1.1.0"
   },
