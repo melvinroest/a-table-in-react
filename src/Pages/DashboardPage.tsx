@@ -1,16 +1,23 @@
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import _ from "lodash";
+
 import { createData } from "../shared/src/utils/createData";
 import Table from "../components/Table";
-const globalData = createData();
-const globalHeaders = transformHeaders(globalData.header, globalData.content[0]);
+import { getRows } from "../actions/DashboardActions";
 
-function transformHeaders(headers: any, content: any) {
+import { RootState } from "../reducers/RootReducer";
+
+// const globalData = createData();
+// const globalHeaders = transformHeaders(globalData.header);
+
+function transformHeaders(headers: any) {
   const shapeHeadersFn = (accumulator: any, header: any, index: number) => {
     return [
       ...accumulator,
       {
         Header: header,
-        accessor: header // toSnakeCase() didn't work??
+        accessor: header //TODO: toSnakeCase() didn't work??
       }
     ];
   }
@@ -19,12 +26,40 @@ function transformHeaders(headers: any, content: any) {
 }
 
 function DashboardPage() {
-  const [data, setData] = React.useState(globalData.content);
+  const [data, setData] = React.useState();
+  const dispatch = useDispatch();
+  const state = useSelector((state: RootState) => state.DashboardPage);
+
+  const fetchData = () => {
+    dispatch(getRows());
+  }
+
+  React.useEffect(() => {
+    fetchData();
+  }, []);
+
+  
+  const dataElement = () => {
+    if (state.loading) {
+      return <p>Loading</p>
+    }
+
+    if (!_.isEmpty(state.data)) {
+      const headers = transformHeaders(Object.keys(state.data[0]));
+      return <Table columns={headers} data={state.data} setData={setData} />
+    }
+
+    if (state.errorMessage !== "") {
+      return <p>{state.errorMessage}</p>
+    }
+
+    return <p>The app is unable to get data, and it is unable to retrieve an error message.</p>
+  }
   
   return (
     <div id="DashboardComponent">
       DashboardComponent
-      <Table columns={globalHeaders} data={data} setData={setData} />
+      {dataElement()}
     </div>
   );
 } 
