@@ -9,13 +9,13 @@ import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import MaUTable from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
-import TableFooter from "@material-ui/core/TableFooter";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TablePagination from "@material-ui/core/TablePagination";
 import { makeStyles } from '@material-ui/core/styles';
+import TableSortLabel from '@material-ui/core/TableSortLabel'
 
 import clsx from 'clsx'
 import _ from "lodash";
@@ -169,8 +169,19 @@ function Table({ columns, data, deleteData, updateMyData, skipPageReset }: any) 
           {headerGroups.map(headerGroup => (
             <TableRow {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map(column => (
-                <TableCell {...column.getHeaderProps()}>
+                <TableCell {...(column.id === "selection"
+                  ? column.getHeaderProps()
+                  : column.getHeaderProps(column.getSortByToggleProps()))}>
+                  
                   {column.render('Header')}
+
+                  {column.id !== 'selection' ? (
+                    <TableSortLabel
+                      active={column.isSorted}
+                      // react-table has an unsorted state which is not treated here
+                      direction={column.isSortedDesc ? 'desc' : 'asc'}
+                    />
+                  ) : null}
                 </TableCell>
               ))}
             </TableRow>
