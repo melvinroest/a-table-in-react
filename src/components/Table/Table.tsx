@@ -1,5 +1,6 @@
 import React from 'react';
-import { useTable, useSortBy, useFilters, useAsyncDebounce, useRowSelect } from 'react-table';
+import { useTable, useSortBy, useFilters, usePagination, useRowSelect } from 'react-table';
+
 import DeleteIcon from '@material-ui/icons/Delete';
 import Checkbox from '@material-ui/core/Checkbox';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -8,15 +9,20 @@ import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import MaUTable from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
+import TableFooter from "@material-ui/core/TableFooter";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import TablePagination from "@material-ui/core/TablePagination";
 import { makeStyles } from '@material-ui/core/styles';
+
 import clsx from 'clsx'
 import _ from "lodash";
 
-const useToolbarStyles = makeStyles((theme: any) => ({
+import TablePaginationActions from './TablePaginationActions'
+
+const useStyles = makeStyles((theme: any) => ({
   root: {
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(1),
@@ -28,6 +34,9 @@ const useToolbarStyles = makeStyles((theme: any) => ({
   title: {
     flex: '1 1 100%',
   },
+  noBorder: {
+    border: 0,
+  }
 }));
 
 const IndeterminateCheckbox = React.forwardRef(
@@ -47,8 +56,8 @@ const IndeterminateCheckbox = React.forwardRef(
   }
 )
 
-function Table({ columns, data, deleteData }: any) {
-  const classes = useToolbarStyles();
+function Table({ columns, data, deleteData, updateMyData, skipPageReset }: any) {
+  const classes = useStyles();
 
   // Use the state and functions returned from useTable to build your UI
   const {
@@ -57,22 +66,26 @@ function Table({ columns, data, deleteData }: any) {
     headerGroups,
     rows,
     prepareRow,
-    state: { selectedRowIds },
+    page,
+    gotoPage,
+    setPageSize,
+    state: { pageIndex, pageSize, selectedRowIds },
   } = useTable(
     {
       columns,
       data,
+      autoResetPage: !skipPageReset,
+      updateMyData, // not part of the API but enables call from cell renderer
     },
-    useFilters, // useFilters!
+    useFilters,
     useSortBy,
+    usePagination,
     useRowSelect,
     hooks => {
       hooks.allColumns.push(columns => [
-        // Let's make a column for selection
+        // UI per cell for selection
         {
           id: 'selection',
-          // The cell can use the individual row's getToggleRowSelectedProps method
-          // to the render a checkbox
           Cell: ({ row }: any) => (
             <div>
               <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
@@ -84,11 +97,21 @@ function Table({ columns, data, deleteData }: any) {
     }
     )
   
-  const deleteUserHandler = (event: any) => {
+  const handleChangePage = (event: any, newPage: any) => {
+    gotoPage(newPage);
+  }
+
+  const handleChangeRowsPerPage = (event: any) => {
+    setPageSize(Number(event.target.value));
+  }
+  
+  const handleDataDeletion = (event: any) => {
     const arrayIndicesToDelete = Object.keys(selectedRowIds).map(x => parseInt(x, 10));
     const dbIndicesToDelete = arrayIndicesToDelete.map((i: number) => data[i].id);
     deleteData(arrayIndicesToDelete, dbIndicesToDelete);
   }
+
+
   const numSelected = Object.keys(selectedRowIds).length;
 
   // Render the UI for your table
@@ -111,13 +134,37 @@ function Table({ columns, data, deleteData }: any) {
 
       {numSelected > 0 ? (
         <Tooltip title="Delete">
-          <IconButton aria-label="delete" onClick={deleteUserHandler}>
+          <IconButton aria-label="delete" onClick={handleDataDeletion}>
             <DeleteIcon />
           </IconButton>
         </Tooltip>
       ) : null}
-    </Toolbar>
+      </Toolbar>
+
+      <TablePagination
+        className={clsx(classes.noBorder)}
+        rowsPerPageOptions={[
+          10,
+          25,
+          50,
+          100,
+          { label: 'All', value: data.length },
+        ]}
+        colSpan={3}
+        count={data.length}
+        rowsPerPage={pageSize}
+        page={pageIndex}
+        SelectProps={{
+          inputProps: { 'aria-label': 'rows per page' },
+          native: true,
+        }}
+        onChangePage={handleChangePage}
+        onChangeRowsPerPage={handleChangeRowsPerPage}
+        ActionsComponent={TablePaginationActions}
+      />
+      
       <MaUTable {...getTableProps()}>
+
         <TableHead>
           {headerGroups.map(headerGroup => (
             <TableRow {...headerGroup.getHeaderGroupProps()}>
@@ -129,8 +176,9 @@ function Table({ columns, data, deleteData }: any) {
             </TableRow>
           ))}
         </TableHead>
+
         <TableBody {...getTableBodyProps()}>
-          {rows.map((row: any, i: number) => {
+          {page.map((row: any, i: number) => {
             prepareRow(row)
             return (
               <TableRow {...row.getRowProps()}>
@@ -141,6 +189,7 @@ function Table({ columns, data, deleteData }: any) {
             )
           })}
         </TableBody>
+
       </MaUTable>
     </TableContainer>
   )

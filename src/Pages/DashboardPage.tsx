@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import _ from "lodash";
 
 import { createData } from "../shared/src/utils/createData";
-import Table from "../components/Table";
+import Table from "../components/Table/Table";
 import { getRows, deleteRows } from "../actions/DashboardActions";
 
 import { RootState } from "../reducers/RootReducer";

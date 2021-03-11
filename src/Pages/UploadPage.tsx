@@ -19,7 +19,6 @@ function UploadPage() {
         const binaryVal = reader.result as ArrayBuffer;
         if (binaryVal) {
           const base64Csv = arrayBufferToBase64(binaryVal);
-          console.log(base64Csv);
           axios({
             method: 'POST',
             url: '/api/useranalytics/upload/',
