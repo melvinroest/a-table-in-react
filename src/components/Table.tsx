@@ -14,6 +14,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx'
+import _ from "lodash";
 
 const useToolbarStyles = makeStyles((theme: any) => ({
   root: {
@@ -46,7 +47,7 @@ const IndeterminateCheckbox = React.forwardRef(
   }
 )
 
-function Table({ columns, data, setData }: any) {
+function Table({ columns, data, deleteData }: any) {
   const classes = useToolbarStyles();
 
   // Use the state and functions returned from useTable to build your UI
@@ -83,12 +84,10 @@ function Table({ columns, data, setData }: any) {
     }
     )
   
-  const removeByIndexs = (array: any, indexs: any) =>
-    array.filter((_: any, i: number) => !indexs.includes(i));
-
   const deleteUserHandler = (event: any) => {
-    const newData = removeByIndexs(data, Object.keys(selectedRowIds).map(x => parseInt(x, 10)));
-    setData(newData);
+    const arrayIndicesToDelete = Object.keys(selectedRowIds).map(x => parseInt(x, 10));
+    const dbIndicesToDelete = arrayIndicesToDelete.map((i: number) => data[i].id);
+    deleteData(arrayIndicesToDelete, dbIndicesToDelete);
   }
   const numSelected = Object.keys(selectedRowIds).length;
 

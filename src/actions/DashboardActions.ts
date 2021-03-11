@@ -1,5 +1,6 @@
 import axios from "axios";
 import * as actionConstant from "./DashboardActionTypes";
+import { StatusCodes } from 'http-status-codes';
 
 export const getRows = (cacheKey: number) => async (dispatch: any) => {
   try {
@@ -13,8 +14,9 @@ export const getRows = (cacheKey: number) => async (dispatch: any) => {
     if (res.data.hash !== cacheKey) {
       dispatch({
         type: actionConstant.UPDATE_CACHE_KEY,
-        payload: res.data
+        payload: res.data.hash
       });
+
       url = `/api//useranalytics/all/`;
       res = await axios.get(url);
       dispatch({
@@ -33,19 +35,30 @@ export const getRows = (cacheKey: number) => async (dispatch: any) => {
   }
 };
 
-export const deleteRows = () => async (dispatch: any) => {
+export const deleteRows = (localIds: Array<number>, ids: Array<number>) => async (dispatch: any) => {
   try {
     dispatch({
       type: actionConstant.DELETE_DATA_REQUEST
     });
 
-    //TODO
     const url = `/api/useranalytics/delete/`;
-    const res = await axios.delete(url);
+    const res = await axios.delete(url, { data: ids });
+
+    if (res.status === StatusCodes.OK) {
+      // update cache
+      let url = `/api//useranalytics/all/hash`;
+      let res = await axios.get(url);
+      dispatch({
+        type: actionConstant.UPDATE_CACHE_KEY,
+        payload: res.data.hash
+      });
+    }
 
     dispatch({
       type: actionConstant.DELETE_DATA_SUCCESS,
-      payload: res.data
+      payload: {
+        ids: localIds,
+      }
     })
   } catch (e) {
     dispatch({
