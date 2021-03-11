@@ -1,20 +1,31 @@
 import axios from "axios";
 import * as actionConstant from "./DashboardActionTypes";
 
-export const getRows = () => async (dispatch: any) => {
+export const getRows = (cacheKey: number) => async (dispatch: any) => {
   try {
     dispatch({
       type: actionConstant.LOAD_DATA_REQUEST
     });
 
-    //TODO
-    const url = `/api//useranalytics/all/`;
-    const res = await axios.get(url);
+    let url = `/api//useranalytics/all/hash`;
+    let res = await axios.get(url);
 
-    dispatch({
-      type: actionConstant.LOAD_DATA_SUCCESS,
-      payload: res.data
-    })
+    if (res.data.hash !== cacheKey) {
+      dispatch({
+        type: actionConstant.UPDATE_CACHE_KEY,
+        payload: res.data
+      });
+      url = `/api//useranalytics/all/`;
+      res = await axios.get(url);
+      dispatch({
+        type: actionConstant.LOAD_DATA_SUCCESS,
+        payload: res.data
+      });
+    } else {
+      dispatch({
+        type: actionConstant.LOAD_DATA_CACHED,
+      });
+    }
   } catch (e) {
     dispatch({
       type: actionConstant.LOAD_DATA_FAIL,

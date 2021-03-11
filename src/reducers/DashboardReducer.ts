@@ -4,20 +4,31 @@ const DefaultState = {
   loading: false,
   data: [],
   errorMessage: "",
-  count: 0
+  count: 0,
+  cacheKey: 0,
 };
 
 const DashboardReducer = (state = DefaultState, action: any) => {
   switch (action.type) {
+    case actionConstant.UPDATE_CACHE_KEY:
+      return {
+        ...state,
+        cacheKey: action.payload.hash
+      };
     case actionConstant.LOAD_DATA_REQUEST:
       return {
         ...state,
         loading: true,
         errorMessage: ""
       };
+    case actionConstant.LOAD_DATA_CACHED:
+      return {
+        ...state,
+        loading: false,
+        errorMessage: "",
+      }
     case actionConstant.LOAD_DATA_SUCCESS:
       //TODO: maybe delete them here as well
-      console.log(action.payload);
       return {
         ...state,
         data: action.payload.data,

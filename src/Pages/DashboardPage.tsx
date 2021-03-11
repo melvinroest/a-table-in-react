@@ -31,7 +31,7 @@ function DashboardPage() {
   const state = useSelector((state: RootState) => state.DashboardPage);
 
   const fetchData = () => {
-    dispatch(getRows());
+    dispatch(getRows(state.cacheKey));
   }
 
   React.useEffect(() => {
