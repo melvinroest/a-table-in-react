@@ -22,6 +22,7 @@ import _ from "lodash";
 
 import TablePaginationActions from './TablePaginationActions'
 import { getFilterTypes, getDefaultColumnFilter } from './columnFilter';
+import { getDefaultEditableCell } from "./editableCell";
 
 const useStyles = makeStyles((theme: any) => ({
   root: {
@@ -57,10 +58,13 @@ const IndeterminateCheckbox = React.forwardRef(
   }
 )
 
-function Table({ columns, data, deleteData, updateMyData, skipPageReset }: any) {
+function Table({ columns, data, deleteData, updateData }: any) {
   const classes = useStyles();
   const filterTypes = React.useMemo(getFilterTypes, []);
-  const defaultColumn = React.useMemo(getDefaultColumnFilter, []);
+  const defaultColumn = React.useMemo(() => ({
+    ...getDefaultColumnFilter(),
+    ...getDefaultEditableCell()
+  }), []);
 
   // Use the state and functions returned from useTable to build your UI
   const {
@@ -79,8 +83,8 @@ function Table({ columns, data, deleteData, updateMyData, skipPageReset }: any) 
       data,
       defaultColumn,
       filterTypes,
-      autoResetPage: !skipPageReset,
-      updateMyData, // not part of the API but enables call from cell renderer
+      // autoResetPage: !skipPageReset,
+      updateData, // not part of the API but enables call from the editable cell renderer
     },
     useFilters,
     useSortBy,

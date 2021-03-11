@@ -66,3 +66,39 @@ export const deleteRows = (localIds: Array<number>, ids: Array<number>) => async
     })
   }
 };
+
+
+export const updateField = (key: string, arrayIndex: number, id: number, value: any) => async (dispatch: any) => {
+  try {
+    dispatch({
+      type: actionConstant.UPDATE_DATA_REQUEST
+    });
+
+    const url = `/api/useranalytics/update/`;
+    const res = await axios.put(url, {
+      data: {
+        id,
+        value,
+        key
+      }
+    });
+    
+    if (res.status === StatusCodes.OK) {
+      console.log('update');
+    }
+
+    dispatch({
+      type: actionConstant.UPDATE_DATA_SUCCESS,
+      payload: {
+        idx: arrayIndex,
+        key,
+        value
+      }
+    });
+
+  } catch (e) {
+    dispatch({
+      type: actionConstant.UPDATE_DATA_FAIL,
+    })
+  }
+};

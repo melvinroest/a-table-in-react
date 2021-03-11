@@ -4,7 +4,7 @@ import _ from "lodash";
 
 import { createData } from "../shared/src/utils/createData";
 import Table from "../components/Table/Table";
-import { getRows, deleteRows } from "../actions/DashboardActions";
+import { getRows, deleteRows, updateField } from "../actions/DashboardActions";
 
 import { RootState } from "../reducers/RootReducer";
 
@@ -37,6 +37,11 @@ function DashboardPage() {
     dispatch(deleteRows(newState, indices));
   }
 
+  const updateData = (arrayIndex: number, key: string, value: any) => {
+    const id = state.data[arrayIndex].id;
+    dispatch(updateField(key, arrayIndex, id, value));
+  }
+
   React.useEffect(() => {
     fetchData();
   }, []);
@@ -51,7 +56,7 @@ function DashboardPage() {
       const headers = transformHeaders(Object.keys(state.data[0]));
       let result = <>
           {/* {state.loading ? <p>Loading</p> : null} */}
-          <Table columns={headers} data={state.data} deleteData={deleteData} />
+          <Table columns={headers} data={state.data} deleteData={deleteData} updateData={updateData} />
         </>
       return result 
     }
