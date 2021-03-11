@@ -21,6 +21,7 @@ import clsx from 'clsx'
 import _ from "lodash";
 
 import TablePaginationActions from './TablePaginationActions'
+import { getFilterTypes, getDefaultColumnFilter } from './columnFilter';
 
 const useStyles = makeStyles((theme: any) => ({
   root: {
@@ -58,6 +59,8 @@ const IndeterminateCheckbox = React.forwardRef(
 
 function Table({ columns, data, deleteData, updateMyData, skipPageReset }: any) {
   const classes = useStyles();
+  const filterTypes = React.useMemo(getFilterTypes, []);
+  const defaultColumn = React.useMemo(getDefaultColumnFilter, []);
 
   // Use the state and functions returned from useTable to build your UI
   const {
@@ -74,6 +77,8 @@ function Table({ columns, data, deleteData, updateMyData, skipPageReset }: any) 
     {
       columns,
       data,
+      defaultColumn,
+      filterTypes,
       autoResetPage: !skipPageReset,
       updateMyData, // not part of the API but enables call from cell renderer
     },
@@ -182,6 +187,9 @@ function Table({ columns, data, deleteData, updateMyData, skipPageReset }: any) 
                       direction={column.isSortedDesc ? 'desc' : 'asc'}
                     />
                   ) : null}
+
+                  {/* Render the columns filter UI */}
+                  <div>{column.canFilter ? column.render('Filter') : null}</div>
                 </TableCell>
               ))}
             </TableRow>
