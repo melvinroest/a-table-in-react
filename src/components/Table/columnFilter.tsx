@@ -75,11 +75,11 @@ export function fuzzyTextFilterFn(rows: any, id: any, filterValue: any) {
   return matchSorter(rows, filterValue, { keys: [ (row: any) => row.values[id]] })
 }
 
-export function determineFilterType(columns: any) {
+export function addFilterTypeToColumns(columns: any, firstRow: any) {
   const result = columns.reduce((accumulator: any, header: any, index: number) => {
     let filterUserInterface = DefaultColumnFilter;
-    let filterFunction = "equals";
-    if (header?.type === "number") {
+    let filterFunction = "includes";
+    if (typeof firstRow[header.accessor] === "number") {
       filterUserInterface = NumberRangeColumnFilter;
       filterFunction = "between";
     }

@@ -74,15 +74,23 @@ const DashboardReducer = (state = DefaultState, action: any) => {
     case actionConstant.UPDATE_DATA_REQUEST:
       return state;
     case actionConstant.UPDATE_DATA_SUCCESS:
-      const [idx, key, value] = action.payload;
-      let newData = [...state.data];
-      newData[idx][key] = value;
+      const { idx, key, value } = action.payload;
+      // let newData = [...state.data];
+      // newData[idx][key] = value;
+      
       return {
         ...state,
-        data: newData,
+        data: state.data.map((item: any, index: any) => {
+          if (index !== idx) {
+            return item;
+          }
+          return {
+            ...item,
+            ...{[key]: value}
+          }
+        }),
         loading: false,
-        errorMessage: "",
-        count: newData.length //TODO potential bug
+        errorMessage: ""
       };
     case actionConstant.UPDATE_DATA_FAIL:
       return {

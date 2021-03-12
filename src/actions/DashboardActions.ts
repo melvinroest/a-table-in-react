@@ -82,10 +82,20 @@ export const updateField = (key: string, arrayIndex: number, id: number, value: 
         key
       }
     });
+    console.log('updateField');
     
     if (res.status === StatusCodes.OK) {
-      console.log('update');
+      // update cache
+      let url = `/api//useranalytics/all/hash`;
+      let res = await axios.get(url);
+      dispatch({
+        type: actionConstant.UPDATE_CACHE_KEY,
+        payload: res.data.hash
+      });
+    } else {
+      throw new Error(`server returned error with status code: ${res.status}`);
     }
+    console.log('updateField', res.status);
 
     dispatch({
       type: actionConstant.UPDATE_DATA_SUCCESS,

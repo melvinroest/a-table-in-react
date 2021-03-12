@@ -22,7 +22,6 @@ import _ from "lodash";
 
 import TablePaginationActions from './TablePaginationActions'
 import { getFilterTypes, getDefaultColumnFilter } from './columnFilter';
-import { getDefaultEditableCell } from "./editableCell";
 
 const useStyles = makeStyles((theme: any) => ({
   root: {
@@ -63,7 +62,6 @@ function Table({ columns, data, deleteData, updateData }: any) {
   const filterTypes = React.useMemo(getFilterTypes, []);
   const defaultColumn = React.useMemo(() => ({
     ...getDefaultColumnFilter(),
-    ...getDefaultEditableCell()
   }), []);
 
   // Use the state and functions returned from useTable to build your UI
@@ -120,7 +118,6 @@ function Table({ columns, data, deleteData, updateData }: any) {
     deleteData(arrayIndicesToDelete, dbIndicesToDelete);
   }
 
-
   const numSelected = Object.keys(selectedRowIds).length;
 
   // Render the UI for your table
@@ -173,30 +170,35 @@ function Table({ columns, data, deleteData, updateData }: any) {
       />
       
       <MaUTable {...getTableProps()}>
-
         <TableHead>
           {headerGroups.map(headerGroup => (
-            <TableRow {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map(column => (
-                <TableCell {...(column.id === "selection"
-                  ? column.getHeaderProps()
-                  : column.getHeaderProps(column.getSortByToggleProps()))}>
-                  
-                  {column.render('Header')}
+            <>
+              <TableRow {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column: any, idx: number) => (
+                  <TableCell key={idx+"a"} {...(column.id === "selection"
+                    ? column.getHeaderProps()
+                    : column.getHeaderProps(column.getSortByToggleProps()))}>
+                    
+                    {column.render('Header')}
 
-                  {column.id !== 'selection' ? (
-                    <TableSortLabel
-                      active={column.isSorted}
-                      // react-table has an unsorted state which is not treated here
-                      direction={column.isSortedDesc ? 'desc' : 'asc'}
-                    />
-                  ) : null}
-
-                  {/* Render the columns filter UI */}
-                  <div>{column.canFilter ? column.render('Filter') : null}</div>
-                </TableCell>
-              ))}
-            </TableRow>
+                    {column.id !== 'selection' ? (
+                      <TableSortLabel
+                        active={column.isSorted}
+                        // react-table has an unsorted state which is not treated here
+                        direction={column.isSortedDesc ? 'desc' : 'asc'}
+                      />
+                    ) : null}
+                  </TableCell>
+                ))}
+              </TableRow>
+              <TableRow>
+                {headerGroup.headers.map((column: any, idx: number) => (
+                  <TableCell key={idx+"b"}>
+                    {column.canFilter ? column.render('Filter') : null}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </>
           ))}
         </TableHead>
 

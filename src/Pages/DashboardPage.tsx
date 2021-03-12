@@ -2,28 +2,15 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from "lodash";
 
-import { createData } from "../shared/src/utils/createData";
 import Table from "../components/Table/Table";
 import { getRows, deleteRows, updateField } from "../actions/DashboardActions";
 
 import { RootState } from "../reducers/RootReducer";
+import { transformHeaders } from "../components/Table/headerLib";
 
+// fake data
 // const globalData = createData();
 // const globalHeaders = transformHeaders(globalData.header);
-
-function transformHeaders(headers: any) {
-  const shapeHeadersFn = (accumulator: any, header: any, index: number) => {
-    return [
-      ...accumulator,
-      {
-        Header: header,
-        accessor: header //TODO: toSnakeCase() didn't work??
-      }
-    ];
-  }
-  const result = headers.reduce(shapeHeadersFn, []);
-  return result;
-}
 
 function DashboardPage() {
   const dispatch = useDispatch();
@@ -53,7 +40,7 @@ function DashboardPage() {
     }
 
     if (!_.isEmpty(state.data)) {
-      const headers = transformHeaders(Object.keys(state.data[0]));
+      const headers = transformHeaders(Object.keys(state.data[0]), state.data[0]);
       let result = <>
           {/* {state.loading ? <p>Loading</p> : null} */}
           <Table columns={headers} data={state.data} deleteData={deleteData} updateData={updateData} />
@@ -70,7 +57,7 @@ function DashboardPage() {
   
   return (
     <div id="DashboardComponent">
-      DashboardComponent
+      <h1>User Analytics Dashboard</h1>
       {dataElement()}
     </div>
   );
