@@ -61,7 +61,7 @@ export function transformHeaders(headers: any, firstRow: any) {
   let result = headers.reduce(shapeHeadersFn, []);
   result = addFilterTypeToColumns(result, firstRow);
   result = addTypeInformation(result, firstRow);
-  // result = addRenderer(result, firstRow);
+  // result = addRenderer(result, firstRow); //TODO: need to figure out how filtering works
   
   //TODO: put in config file, to make sure multiple fields could be editable cells
   //TODO: create an edit toggle so that you can switch between a nice presentation mode and an edit mode

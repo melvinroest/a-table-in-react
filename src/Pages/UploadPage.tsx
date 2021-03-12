@@ -4,28 +4,44 @@ import React, { useCallback } from 'react'
 import { Upload } from 'react-feather';
 import { FileWithPath, useDropzone } from 'react-dropzone'
 import classnames from 'classnames';
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { arrayBufferToBase64 } from "../private/stringTransform";
 
+import { StatusCodes } from 'http-status-codes';
+
 function UploadPage() {
+  const [uploadMessage, setUploadMessage] = React.useState("");
   const onDrop = useCallback((acceptedFiles) => {
     acceptedFiles.forEach((file: FileWithPath) => {
       const reader = new FileReader()
 
       reader.onabort = () => console.log('file reading was aborted')
       reader.onerror = () => console.log('file reading has failed')
-      reader.onload = () => {
+      reader.onload = async () => {
       // Do whatever you want with the file contents
         const binaryVal = reader.result as ArrayBuffer;
         if (binaryVal) {
           const base64Csv = arrayBufferToBase64(binaryVal);
-          axios({
-            method: 'POST',
-            url: '/api/useranalytics/upload/',
-            data: {
-              base64Csv: base64Csv
+          let res: AxiosResponse<any>;
+          try {
+            res = await axios({
+              method: 'POST',
+              url: '/api/useranalytics/upload/',
+              data: {
+                base64Csv: base64Csv
+              }
+            });
+          } catch (e) {
+            setUploadMessage(e.response.data);
+            return;
+          }
+          if (res!) {  
+            if (res.status === StatusCodes.CREATED) {
+              setUploadMessage("Upload succeeded!");
+            } else {
+              setUploadMessage("Something went wrong and there is no error information");
             }
-          });
+          }
         }
       }
       reader.readAsArrayBuffer(file)
@@ -45,8 +61,9 @@ function UploadPage() {
         <p>Upload CSV</p>
       </div>
       <aside>
-        <h4>Files</h4>
+        <h4>Files Uploaded</h4>
         <ul>{files}</ul>
+        <ul>Upload message: {uploadMessage}</ul>
       </aside>
     </section>
   )
