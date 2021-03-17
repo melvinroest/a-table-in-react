@@ -11,3 +11,9 @@ services:
       - "/app/node_modules"
     ports:
       - 3000:3000
+    networks:
+      - miro_net
+
+networks:
+  miro_net:
+    name: miro_net

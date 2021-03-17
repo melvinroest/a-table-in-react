@@ -1,5 +1,5 @@
 {
-  "proxy": "http://localhost:5001",
+  "proxy": "http://miro_table_server_container:5001",
   "name": "table",
   "version": "0.1.0",
   "private": true,
